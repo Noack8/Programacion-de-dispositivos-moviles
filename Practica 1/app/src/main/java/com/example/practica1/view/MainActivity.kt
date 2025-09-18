@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         //binding.viewContainer.setOnClickListener { userViewModel.randomUser(context = this)  }
-
+        binding.txtEditEmail.setOnClickListener { binding.txtEditEmail.text.clear() }
         /* Logica de negocio del boton iniciar sesion */
         binding.btnIniciarSesion.setOnClickListener {
             val email:String = binding.txtEditEmail.text.toString()
@@ -37,9 +37,13 @@ class MainActivity : AppCompatActivity() {
             if (UserProvider.validateEmailPw(email,pw)){
                 val intent = Intent(this, WelcomeActivity::class.java)
                 startActivity(intent)
+                binding.txtEditEmail.text.clear()
+                binding.txtEditPsswd.text.clear()
             }
             else{
-                finish()
+                binding.txtEditEmail.text.clear()
+                binding.txtEditPsswd.text.clear()
+                binding.txtEditEmail.setText("Error de correo o password")
             }
         }
     }
