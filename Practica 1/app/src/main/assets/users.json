@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Juan Pérez",
+    "email": "juan@ipn.mx",
+    "passwd": "8D969EEF6ECAD3C29A3A629280E686CF0C3F5D5A86AFF3CA12020C923ADC6C92",
+    "pregunta": "Mascota favorita de la infancia",
+    "respuesta": "Conejo"
+  },
+  {
+    "name": "Ana Torres",
+    "email": "ana@ipn.mx",
+    "passwd": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721",
+    "pregunta": "Color favorito de tu mejor amigo",
+    "respuesta": "Morado"
+  },
+  {
+    "name": "Laura Torres",
+    "email": "laura@ipn.mx",
+    "passwd": "8D969EEF6ECAD3C29A3A629280E686CF0C3F5D5A86AFF3CA12020C923ADC6C92",
+    "pregunta": "Apellido de soltera de tu madre",
+    "respuesta": "Gutierrez"
+  },
+  {
+    "name": "Perla Sánchez",
+    "email": "perla@ipn.mx",
+    "passwd": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721",
+    "pregunta": "Crush actual de tu salon",
+    "respuesta": "Rogelio"
+  },
+  {
+    "name": "Oscar Martínez",
+    "email": "oscar@ipn.mx",
+    "passwd": "8D969EEF6ECAD3C29A3A629280E686CF0C3F5D5A86AFF3CA12020C923ADC6C92",
+    "pregunta": "Equipo que derroto al tuyo en el super BAWL",
+    "respuesta": "Steelers"
+  }
+]
