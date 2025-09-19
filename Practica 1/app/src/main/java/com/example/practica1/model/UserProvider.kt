@@ -11,6 +11,7 @@ class UserProvider {
         private lateinit var listU:List<UserModel>
         private lateinit var user: UserModel
 
+        fun getUser(): UserModel{ return user }
         fun getUserSelect(): String{ return user.name }
         fun getUserPregunta(): String{ return user.pregunta }
         fun random(context: Context):UserModel{
@@ -20,10 +21,35 @@ class UserProvider {
             //return users[num]
         }
 
-        fun setUserNewPassword(context: Context,pw: String){
-            val json: String = context.assets.open("users.json")
-                .bufferedReader()
-                .use { it.readText() }
+        //Funcion para cambiar la contraseña
+        fun setUserNewPw(context: Context,pw: String): Boolean{
+            if(pw.isNotEmpty() && pw.length >= 8 && pw.contains(Regex("[A-Z]"))
+            && pw.contains(Regex("[0-9]"))
+            && pw.contains(Regex("[_.#$?]"))){
+                val pwSha256: String = sha256(pw)
+                val json: String = context.assets.open("users.json")
+                    .bufferedReader()
+                    .use { it.readText() }
+                val gson = Gson()
+                val userType = object : TypeToken<List<UserModel>>() {}.type
+                val users: List<UserModel> = gson.fromJson(json, userType)
+                users.forEach {
+                    if(it.email == user.email){
+                        it.passwd = pwSha256
+                    }
+                }
+                val jsonString = gson.toJson(users)
+                context.openFileOutput("users.json", Context.MODE_PRIVATE).use {
+                    it.write(jsonString.toByteArray())
+                }
+                users.forEach {
+                    Log.d("UserInfo", "Name: ${it.name}" +
+                            ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
+                }
+                return true
+            }
+
+            return false
         }
 
         // función para leer usuarios del JSON y parsearlos a data class
@@ -34,6 +60,12 @@ class UserProvider {
             val gson = Gson()
             val userType = object : TypeToken<List<UserModel>>() {}.type
             val users: List<UserModel> = gson.fromJson(json, userType)
+            users.forEach {
+                //val hashedPass = sha256(it.passwd)
+                Log.d("UserInfo", "Name: ${it.name}" +
+                        ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
+                //Log.d("UserInfo", "Name: ${it.name}, Email: ${it.email}, Pass: ${it.passwd}")
+            }
             listU = users
         }
 

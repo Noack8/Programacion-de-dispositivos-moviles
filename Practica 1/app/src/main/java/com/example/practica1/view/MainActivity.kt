@@ -22,11 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         UserProvider.readUsersFromAssets(this)
 
-        userViewModel.userModel.observe(this, {userModel ->
-            binding.textName.text = userModel.name
-            binding.TextEmail.text = userModel.email
-        })
-
         //binding.viewContainer.setOnClickListener { userViewModel.randomUser(context = this)  }
         binding.txtEditEmail.setOnClickListener { binding.txtEditEmail.text.clear() }
 
@@ -42,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             if (UserProvider.validateEmailPw(email,pw)){
                 val intent = Intent(this, WelcomeActivity::class.java)
                 startActivity(intent)
+                finish()
                 binding.txtEditEmail.text.clear()
                 binding.txtEditPsswd.text.clear()
             }
