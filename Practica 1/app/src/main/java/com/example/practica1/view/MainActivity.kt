@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         //binding.viewContainer.setOnClickListener { userViewModel.randomUser(context = this)  }
         binding.txtEditEmail.setOnClickListener { binding.txtEditEmail.text.clear() }
+
+        binding.btnOlvidaste.setOnClickListener {
+            val intent = Intent(this, PreguntaActivity::class.java)
+            startActivity(intent)
+        }
         /* Logica de negocio del boton iniciar sesion */
         binding.btnIniciarSesion.setOnClickListener {
             val email:String = binding.txtEditEmail.text.toString()

@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Practica1">
         <activity
+            android:name=".view.CambiarPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.NewPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.NuevaPassword"
+            android:exported="false" />
+        <activity
+            android:name=".view.PreguntaActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.WelcomeActivity"
             android:exported="false" />
         <activity

@@ -12,6 +12,7 @@ class UserProvider {
         private lateinit var user: UserModel
 
         fun getUserSelect(): String{ return user.name }
+        fun getUserPregunta(): String{ return user.pregunta }
         fun random(context: Context):UserModel{
             val num = (0..4).random()
             readUsersFromAssets(context)
@@ -36,6 +37,25 @@ class UserProvider {
             listU = users
         }
 
+        //Funcion que valida que el correo esta en el json
+        fun validateEmailforPregunta (email:String): Boolean{
+            listU.forEach {
+                Log.d("UserInfo","Email: ${it.email} == Tu: ${email}")
+                if(email.isNotEmpty() && email == it.email) {
+                    user = it
+                    return true
+                }
+            }
+            return false
+        }
+        //Funcion que valida que la respuesta sea la correcta
+        fun validateRespuesta (respuesta:String): Boolean{
+            val resSha256 : String = sha256(respuesta.lowercase())
+            if(respuesta.isNotEmpty() && resSha256 == user.respuesta) {
+                return true
+            }
+            return false
+        }
         //Funcion que valida que los datos que dio el usuario estan en el json
         fun validateEmailPw (email:String, pw: String): Boolean{
             val pwSha256: String = sha256(pw)
