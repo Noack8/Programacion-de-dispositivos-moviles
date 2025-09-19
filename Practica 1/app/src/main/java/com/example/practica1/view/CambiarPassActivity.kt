@@ -29,8 +29,8 @@ class CambiarPassActivity : AppCompatActivity() {
             binding.editTxtPwCambio.text.clear()
             if(UserProvider.setUserNewPw(this,pw)){
                 binding.txtTituloCPA.text = "Password cambiada"
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                //val intent = Intent(this, MainActivity::class.java)
+                //startActivity(intent)
                 finish()
             }
             else{

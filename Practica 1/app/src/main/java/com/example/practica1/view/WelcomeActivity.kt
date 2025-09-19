@@ -23,6 +23,7 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.txtNameUser.setText(UserProvider.getUserSelect())
+        binding.toolbar.setTitle(UserProvider.getUserSelect())
 
         binding.btnCamPasswd.setOnClickListener {
             val intent = Intent(this, CambiarPassActivity::class.java)

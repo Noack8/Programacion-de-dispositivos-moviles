@@ -39,6 +39,7 @@ class UserProvider {
                     }
                 }
                 val jsonString = gson.toJson(users)
+                Log.d("Json", jsonString)
                 context.openFileOutput("users.json", Context.MODE_PRIVATE).use {
                     it.write(jsonString.toByteArray())
                 }
@@ -46,6 +47,7 @@ class UserProvider {
                     Log.d("UserInfo", "Name: ${it.name}" +
                             ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
                 }
+                listU = users
                 return true
             }
 
@@ -61,10 +63,8 @@ class UserProvider {
             val userType = object : TypeToken<List<UserModel>>() {}.type
             val users: List<UserModel> = gson.fromJson(json, userType)
             users.forEach {
-                //val hashedPass = sha256(it.passwd)
                 Log.d("UserInfo", "Name: ${it.name}" +
                         ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
-                //Log.d("UserInfo", "Name: ${it.name}, Email: ${it.email}, Pass: ${it.passwd}")
             }
             listU = users
         }

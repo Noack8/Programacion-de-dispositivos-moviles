@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             if (UserProvider.validateEmailPw(email,pw)){
                 val intent = Intent(this, WelcomeActivity::class.java)
                 startActivity(intent)
-                finish()
+                //finish()
                 binding.txtEditEmail.text.clear()
                 binding.txtEditPsswd.text.clear()
             }
