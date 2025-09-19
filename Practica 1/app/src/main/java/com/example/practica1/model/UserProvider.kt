@@ -11,7 +11,9 @@ class UserProvider {
         private lateinit var listU:List<UserModel>
         private lateinit var user: UserModel
 
+        fun getUser(): UserModel{ return user }
         fun getUserSelect(): String{ return user.name }
+        fun getUserPregunta(): String{ return user.pregunta }
         fun random(context: Context):UserModel{
             val num = (0..4).random()
             readUsersFromAssets(context)
@@ -19,10 +21,37 @@ class UserProvider {
             //return users[num]
         }
 
-        fun setUserNewPassword(context: Context,pw: String){
-            val json: String = context.assets.open("users.json")
-                .bufferedReader()
-                .use { it.readText() }
+        //Funcion para cambiar la contraseña
+        fun setUserNewPw(context: Context,pw: String): Boolean{
+            if(pw.isNotEmpty() && pw.length >= 8 && pw.contains(Regex("[A-Z]"))
+            && pw.contains(Regex("[0-9]"))
+            && pw.contains(Regex("[_.#$?]"))){
+                val pwSha256: String = sha256(pw)
+                val json: String = context.assets.open("users.json")
+                    .bufferedReader()
+                    .use { it.readText() }
+                val gson = Gson()
+                val userType = object : TypeToken<List<UserModel>>() {}.type
+                val users: List<UserModel> = gson.fromJson(json, userType)
+                users.forEach {
+                    if(it.email == user.email){
+                        it.passwd = pwSha256
+                    }
+                }
+                val jsonString = gson.toJson(users)
+                Log.d("Json", jsonString)
+                context.openFileOutput("users.json", Context.MODE_PRIVATE).use {
+                    it.write(jsonString.toByteArray())
+                }
+                users.forEach {
+                    Log.d("UserInfo", "Name: ${it.name}" +
+                            ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
+                }
+                listU = users
+                return true
+            }
+
+            return false
         }
 
         // función para leer usuarios del JSON y parsearlos a data class
@@ -33,18 +62,33 @@ class UserProvider {
             val gson = Gson()
             val userType = object : TypeToken<List<UserModel>>() {}.type
             val users: List<UserModel> = gson.fromJson(json, userType)
-
-            // Mostramos en log los usuarios con contraseña en SHA-256
-            /*users.forEach {
-                //val hashedPass = sha256(it.passwd)
+            users.forEach {
                 Log.d("UserInfo", "Name: ${it.name}" +
                         ", Email: ${it.email}, Pass(SHA-256): ${it.passwd}")
-                //Log.d("UserInfo", "Name: ${it.name}, Email: ${it.email}, Pass: ${it.passwd}")
-            }*/
-
+            }
             listU = users
         }
 
+        //Funcion que valida que el correo esta en el json
+        fun validateEmailforPregunta (email:String): Boolean{
+            listU.forEach {
+                Log.d("UserInfo","Email: ${it.email} == Tu: ${email}")
+                if(email.isNotEmpty() && email == it.email) {
+                    user = it
+                    return true
+                }
+            }
+            return false
+        }
+        //Funcion que valida que la respuesta sea la correcta
+        fun validateRespuesta (respuesta:String): Boolean{
+            val resSha256 : String = sha256(respuesta.lowercase())
+            if(respuesta.isNotEmpty() && resSha256 == user.respuesta) {
+                return true
+            }
+            return false
+        }
+        //Funcion que valida que los datos que dio el usuario estan en el json
         fun validateEmailPw (email:String, pw: String): Boolean{
             val pwSha256: String = sha256(pw)
             listU.forEach {
@@ -65,24 +109,5 @@ class UserProvider {
             val hashBytes = digest.digest(input.toByteArray(Charsets.UTF_8))
             return hashBytes.joinToString("") { "%02x".format(it) }.uppercase()
         }
-        /*
-                // array estático de ejemplo con objetos UserModel
-                private val users: Array<UserModel> = arrayOf(
-                    UserModel( name = "Juan",
-                        email = "aljuan1500@alumno.ipn.mx",
-                        passwd = "1240fcf46967c0b28950a8d3e769e69b92e4fd0dabbfee7ab50ce6beca813c31"),
-                    UserModel( name = "Laura",
-                        email = "allaura1500@alumno.ipn.mx",
-                        passwd = "0fdd4ecd5592937dff86c9e980218755600db563b4f265879c8ead528e2a3859"),
-                    UserModel( name = "Victoria",
-                        email = "alvictoria1500@alumno.ipn.mx",
-                        passwd = "ba9805141ec964c798597ebd03fb44f2fc42ebb06074d9700836dfa76f95659f"),
-                    UserModel( name = "Oscar",
-                        email = "aloscar1400@alumno.ipn.mx",
-                        passwd = "03274afc8ab0ad043e215a03a97e160a8fc7675e36eb0b1081f53ff6127be876"),
-                    UserModel( name = "Victoria",
-                        email = "alelias1400@alumno.ipn.mx",
-                        passwd = "79fbbec52216eac7a0d021d0c7d5b4bb223951616877d6bb2b9a2dcaab3b21ee"),
-                )*/
     }
 }

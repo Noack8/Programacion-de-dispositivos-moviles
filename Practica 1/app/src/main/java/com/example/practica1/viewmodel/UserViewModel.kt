@@ -15,4 +15,9 @@ class UserViewModel : ViewModel() {
         val currentUser = UserProvider.random(context)
         userModel.postValue(currentUser)
     }
+
+    fun selectUser(){
+        val currentUser = UserProvider.getUser()
+        userModel.postValue(currentUser)
+    }
 }
