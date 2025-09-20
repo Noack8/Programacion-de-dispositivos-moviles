@@ -8,6 +8,20 @@
     android:background="@drawable/cel3"
     tools:context=".view.WelcomeActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:popupTheme="@style/CustomPopupMenu" />
+
     <TextView
         android:id="@+id/tvMensaje"
         android:layout_width="wrap_content"
@@ -17,10 +31,10 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintHorizontal_bias="0.172"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.121" />
+        app:layout_constraintVertical_bias="0.19" />
 
     <TextView
         android:id="@+id/txtNameUser"
@@ -34,7 +48,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMensaje"
         app:layout_constraintVertical_bias="0.099" />
-
+    <!--
     <Button
         android:id="@+id/btnCamPasswd"
         android:layout_width="wrap_content"
@@ -57,26 +71,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCamPasswd"
         app:layout_constraintVertical_bias="0.189" />
-
-    <!-- res/layout/activity_main.xml -->
-    <LinearLayout
-        android:layout_width="426dp"
-        android:layout_height="65dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="415dp"
-            android:layout_height="match_parent"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="Mi App" />
-
-        <!-- Tu contenido aquí -->
-
-    </LinearLayout>
-
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>
