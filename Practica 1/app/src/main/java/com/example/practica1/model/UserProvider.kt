@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileWriter
+import java.io.InputStreamReader
 import java.security.MessageDigest
 
 class UserProvider {
@@ -19,6 +22,33 @@ class UserProvider {
             readUsersFromAssets(context)
             return listU[num]
             //return users[num]
+        }
+
+        //Funcion para cambiar la contrasena version del profesor
+        fun setUserNewPwV2(context: Context,pw: String): Boolean {
+            if(pw.isNotEmpty() && pw.length >= 8 && pw.contains(Regex("[A-Z]"))
+                && pw.contains(Regex("[0-9]"))
+                && pw.contains(Regex("[_.#$?]"))) {
+                val pwSha256: String = sha256(pw)
+                val gson = Gson()
+                listU.forEach {
+                    if (it.email == user.email) {
+                        it.passwd = pwSha256
+                    }
+                }
+                // Convertir el objeto a JSON
+                val updatedJson = gson.toJson(listU)
+                // Obtener la ruta del archivo en el almacenamiento interno (puedes usar external storage si prefieres)
+                val file = File(context.filesDir, "user.json")
+
+                // Escribir el JSON actualizado en el archivo
+                FileWriter(file).use { writer ->
+                    writer.write(updatedJson)
+                }
+                return true
+            }else{
+                return false
+            }
         }
 
         //Funcion para cambiar la contraseña
