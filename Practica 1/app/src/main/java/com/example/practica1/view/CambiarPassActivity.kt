@@ -26,8 +26,10 @@ class CambiarPassActivity : AppCompatActivity() {
 
         binding.btnGuardar.setOnClickListener {
             val pw:String = binding.editTxtPwCambio.text.toString()
+            val pw2:String = binding.editTxtPwCambio2.text.toString()
             binding.editTxtPwCambio.text.clear()
-            if(UserProvider.setUserNewPw(this,pw)){
+            binding.editTxtPwCambio2.text.clear()
+            if(UserProvider.setUserNewPw(this,pw,pw2)){
                 binding.txtTituloCPA.text = "Password cambiada"
                 //val intent = Intent(this, MainActivity::class.java)
                 //startActivity(intent)

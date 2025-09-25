@@ -35,6 +35,19 @@
         app:layout_constraintTop_toBottomOf="@+id/txtMsj"
         app:layout_constraintVertical_bias="0.149" />
 
+    <EditText
+        android:id="@+id/editTxtPwCambio2"
+        android:layout_width="165dp"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.861"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMsj"
+        app:layout_constraintVertical_bias="0.364" />
+
     <TextView
         android:id="@+id/txtNewPw"
         android:layout_width="wrap_content"
@@ -58,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTxtPwCambio"
-        app:layout_constraintVertical_bias="0.23" />
+        app:layout_constraintVertical_bias="0.53" />
 
     <TextView
         android:id="@+id/txtMsj"
@@ -74,5 +87,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTituloCPA"
         app:layout_constraintVertical_bias="0.089" />
+
+    <TextView
+        android:id="@+id/txtViewConf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirmar password:"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtNewPw"
+        app:layout_constraintVertical_bias="0.19" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

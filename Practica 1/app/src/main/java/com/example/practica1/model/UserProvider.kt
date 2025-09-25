@@ -25,10 +25,11 @@ class UserProvider {
         }
 
         //Funcion para cambiar la contrasena version del profesor
-        fun setUserNewPwV2(context: Context,pw: String): Boolean {
+        fun setUserNewPwV2(context: Context,pw: String,pw2: String): Boolean {
             if(pw.isNotEmpty() && pw.length >= 8 && pw.contains(Regex("[A-Z]"))
                 && pw.contains(Regex("[0-9]"))
-                && pw.contains(Regex("[_.#$?]"))) {
+                && pw.contains(Regex("[_.#$?]"))
+                && pw == pw2) {
                 val pwSha256: String = sha256(pw)
                 val gson = Gson()
                 listU.forEach {
@@ -52,10 +53,11 @@ class UserProvider {
         }
 
         //Funcion para cambiar la contraseña
-        fun setUserNewPw(context: Context,pw: String): Boolean{
+        fun setUserNewPw(context: Context,pw: String,pw2: String): Boolean{
             if(pw.isNotEmpty() && pw.length >= 8 && pw.contains(Regex("[A-Z]"))
             && pw.contains(Regex("[0-9]"))
-            && pw.contains(Regex("[_.#$?]"))){
+            && pw.contains(Regex("[_.#$?]"))
+            && pw == pw2){
                 val pwSha256: String = sha256(pw)
                 val json: String = context.assets.open("users.json")
                     .bufferedReader()
