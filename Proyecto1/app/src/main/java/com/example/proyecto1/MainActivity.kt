@@ -3,45 +3,21 @@ package com.example.proyecto1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.proyecto1.ui.theme.Proyecto1Theme
+import androidx.room.Room
+import com.example.proyecto1.model.AppDatabase
+import com.example.proyecto1.model.UserRepository
+import com.example.proyecto1.viewModel.UserViewModel
+import com.example.proyecto1.ui.Navigator
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        val db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "users.db").build()
+        val repo = UserRepository(db.userDao())
+        val viewModel = UserViewModel(repo)
+
         setContent {
-            Proyecto1Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            Navigator(viewModel)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Proyecto1Theme {
-        Greeting("Android")
     }
 }
