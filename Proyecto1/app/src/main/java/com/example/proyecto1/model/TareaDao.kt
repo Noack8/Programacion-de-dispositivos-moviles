@@ -6,11 +6,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface UserDao {
+interface TareaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(usuario: User)
-
+    suspend fun insertTarea(tarea: Tarea)
+    @Query("SELECT * FROM tareas")
+    suspend fun getAllTareas(): List<Tarea>
+    /*
     @Query("SELECT * FROM usuarios WHERE correo = :correo")
     suspend fun getUserByEmail(correo: String): User?
 
@@ -19,8 +21,5 @@ interface UserDao {
 
     @Query("SELECT * FROM usuarios WHERE boleta = :boleta")
     suspend fun getUserByStudentId(boleta: String): User?
-
-    @Query("SELECT * FROM usuarios")
-    suspend fun getAllUsers(): List<User>
-
+    */
 }

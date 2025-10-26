@@ -4,7 +4,6 @@ package com.example.proyecto1.ui
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,24 +16,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.proyecto1.model.User
-import com.example.proyecto1.viewModel.UserViewModel
-import java.util.regex.Pattern
+import com.example.proyecto1.model.Tarea
+import com.example.proyecto1.viewModel.TareaViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegistroScreen (navController: NavHostController, viewModel: UserViewModel) {
+fun RegTareaScreen (navController: NavHostController, viewModel: TareaViewModel) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Registro de usuario") })
+            TopAppBar(title = { Text("Registro de tarea") })
         }
     ) {
         Column(
@@ -52,54 +48,46 @@ fun RegistroScreen (navController: NavHostController, viewModel: UserViewModel) 
                 keyboardType = KeyboardType.Text
             )
             InputField(
-                label = "Correo",
-                value = viewModel.correo,
-                onValueChange = { viewModel.correo = it },
-                error = viewModel.correoError,
-                keyboardType = KeyboardType.Email
-            )
-            InputField(
-                label = "Boleta",
-                value = viewModel.boleta,
-                onValueChange = { viewModel.boleta = it },
-                error = viewModel.boletaError,
-                keyboardType = KeyboardType.Number
-            )
-            InputField(
-                label = "Carrera",
-                value = viewModel.carrera,
-                onValueChange = { viewModel.carrera = it },
-                error = viewModel.carreraError,
+                label = "Descripcion",
+                value = viewModel.descripcion,
+                onValueChange = { viewModel.descripcion = it },
+                error = viewModel.descripcionError,
                 keyboardType = KeyboardType.Text
             )
             InputField(
-                label = "Contraseña",
-                value = viewModel.password,
-                onValueChange = { viewModel.password = it },
-                error = viewModel.passwordError,
-                keyboardType = KeyboardType.Password,
-                isPassword = true
+                label = "Fecha asignada de la Tarea",
+                value = viewModel.fechaAsignada,
+                onValueChange = { viewModel.fechaAsignada = it },
+                error = viewModel.fechaAsignadaError,
+                keyboardType = KeyboardType.Text
             )
             InputField(
-                label = "Confirmar contraseña",
-                value = viewModel.confirmPassword,
-                onValueChange = { viewModel.confirmPassword = it },
-                error = viewModel.confirmPasswordError,
-                keyboardType = KeyboardType.Password,
-                isPassword = true
+                label = "Fecha limite de entrega",
+                value = viewModel.fechaLimite,
+                onValueChange = { viewModel.fechaLimite = it },
+                error = viewModel.fechaLimiteError,
+                keyboardType = KeyboardType.Text
+            )
+            InputField(
+                label = "Nivel de prioridad",
+                value = viewModel.prioridad,
+                onValueChange = { viewModel.prioridad = it },
+                error = viewModel.prioridadError,
+                keyboardType = KeyboardType.Number
             )
             Button(
                 onClick = {
                     if (viewModel.validarCampos()){
-                        val nuevoUsuario = User(
-                            boleta = viewModel.boleta,
+                        val nuevaTarea = Tarea(
                             nombre = viewModel.nombre,
-                            correo = viewModel.correo,
-                            carrera = viewModel.carrera,
-                            password = viewModel.password
+                            descripcion = viewModel.descripcion,
+                            fechaAsignada = viewModel.fechaAsignada,
+                            fechaLimite = viewModel.fechaLimite,
+                            completado = false,
+                            prioridad = viewModel.prioridad.toInt()
                         )
-                        Log.d("PruebasJuan", "Nuevo usuario: $nuevoUsuario")
-                        viewModel.addUser(nuevoUsuario)
+                        Log.d("PruebasJuan", "Nueva tarea: $nuevaTarea")
+                        viewModel.addTarea(nuevaTarea)
                         Log.d("PruebasJuan", "Paso la prueba")
                         navController.navigate("listar")
                     }

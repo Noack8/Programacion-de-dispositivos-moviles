@@ -4,14 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.proyecto1.viewModel.UserViewModel
+import com.example.proyecto1.viewModel.TareaViewModel
 
 @Composable
-fun Navigator(viewModel: UserViewModel) {
+fun Navigator(viewModel: TareaViewModel) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "inicio") {
-        composable("inicio") { RegistroScreen(navController, viewModel) }
-        composable("listar") { UserListScreen(navController, viewModel) }
-        //composable("registro") { FormRegScreen(navController) }
+    NavHost(navController = navController, startDestination = "listar") {
+        composable("listar") { TareaListScreen(navController, viewModel) }
+        composable("agregar") { RegTareaScreen(navController, viewModel) }
     }
 }
