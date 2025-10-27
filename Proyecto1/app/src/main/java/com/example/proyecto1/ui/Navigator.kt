@@ -12,5 +12,6 @@ fun Navigator(viewModel: TareaViewModel) {
     NavHost(navController = navController, startDestination = "listar") {
         composable("listar") { TareaListScreen(navController, viewModel) }
         composable("agregar") { RegTareaScreen(navController, viewModel) }
+        composable("editar") { EditTareaScreen(navController, viewModel) }
     }
 }

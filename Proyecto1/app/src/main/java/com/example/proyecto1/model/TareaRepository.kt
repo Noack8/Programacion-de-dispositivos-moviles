@@ -11,9 +11,13 @@ class TareaRepository(private val dao: TareaDao) {
         }
     }
     suspend fun getAll() = dao.getAllTareas()
-    /*
-    suspend fun findByEmail(correo: String) = dao.getUserByEmail(correo)
-    suspend fun findByName(nombre: String) = dao.getUserByName(nombre)
-    suspend fun findByStudentId(boleta: String) = dao.getUserByStudentId(boleta)
-    */
+    suspend fun eliminarTarea(tarea: Tarea) {
+        dao.deleteTarea(tarea)
+    }
+    suspend fun modificarCompletada(tareaId: Int, estado: Boolean) {
+        dao.actualizarCompletada(tareaId, estado)
+    }
+    suspend fun actualizarTarea(tarea: Tarea) {
+        dao.update(tarea)
+    }
 }

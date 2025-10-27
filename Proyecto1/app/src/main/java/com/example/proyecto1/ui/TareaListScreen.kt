@@ -2,29 +2,21 @@
 
 package com.example.proyecto1.ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.proyecto1.model.Tarea
 import com.example.proyecto1.viewModel.TareaViewModel
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel) {
@@ -38,48 +30,110 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Lista de Tareas") },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            viewModel.limpiarCampos()
+                            navController.navigate("agregar")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Agregar Tarea",
+                            tint = Color.Magenta
+                        )
+                    }
+                }
             )
         }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
 
-            // Botón "Agregar Tarea" al inicio de la lista
-            item {
-                Button(
-                    onClick = { navController.navigate("agregar") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Text("Agregar Tarea")
-                }
-            }
-
-            // Lista de tareas
             items(tareas) { tarea ->
-                Column(modifier = Modifier.padding(8.dp)) {
+                var showDialog by remember { mutableStateOf(false) }
 
+                Column(modifier = Modifier.padding(8.dp)) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("Nombre: ${tarea.nombre}", style = MaterialTheme.typography.titleMedium)
-                            Text("Descripcion: ${tarea.descripcion}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Fecha de asignacion: ${tarea.fechaAsignada}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Fecha limite de entrega: ${tarea.fechaLimite}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Completada: ${tarea.completado}", style = MaterialTheme.typography.bodyMedium)
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = tarea.titulo,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Checkbox(
+                                    checked = tarea.completado,
+                                    onCheckedChange = { isChecked ->
+                                        viewModel.cambiarCompletada(tarea, isChecked)
+                                    }
+                                )
+                            }
+
+                            Text("Descripción: ${tarea.descripcion}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Fecha de asignación: ${tarea.fechaAsignada}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Fecha límite de entrega: ${tarea.fechaLimite}", style = MaterialTheme.typography.bodyMedium)
+                            //Text("Completada: ${tarea.completado}", style = MaterialTheme.typography.bodyMedium)
                             Text("Nivel de prioridad: ${tarea.prioridad}", style = MaterialTheme.typography.bodyMedium)
 
-                            // Botón de editar más pequeño
-                            Button(
-                                onClick = { /*navController.navigate("editar")*/ },
-                                modifier = Modifier.padding(top = 8.dp) // sin fillMaxWidth()
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Editar")
+                                Button(
+                                    onClick = { showDialog = true },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                ) {
+                                    Icon(Icons.Filled.Delete, contentDescription = "Borrar", tint = Color.White)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
+                                Button(
+                                    onClick = {
+                                        viewModel.limpiarCampos()
+                                        viewModel.seleccionarTareaParaEditar(tarea)
+                                        navController.navigate("editar")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = Color.White)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
                             }
                         }
+                    }
+                    if (showDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showDialog = false },
+                            title = { Text("Confirmar eliminación") },
+                            text = { Text("¿Seguro que quieres borrar esta tarea?") },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDialog = false
+                                        viewModel.borrarTarea(tarea)
+                                        navController.navigate("listar") {
+                                            popUpTo("listar") { inclusive = true }
+                                        }
+                                    }
+                                ) {
+                                    Text("Sí", color = Color.Red)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDialog = false }) {
+                                    Text("No")
+                                }
+                            }
+                        )
                     }
                 }
             }

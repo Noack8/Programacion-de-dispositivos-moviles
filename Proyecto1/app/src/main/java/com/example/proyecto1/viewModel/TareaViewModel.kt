@@ -17,14 +17,14 @@ import java.util.regex.Pattern
 
 class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
 
-    var nombre by mutableStateOf("")
+    var titulo by mutableStateOf("")
     var descripcion by mutableStateOf("")
     var fechaAsignada by mutableStateOf("")
     var fechaLimite by mutableStateOf("")
     var completado by mutableStateOf(false)
-    var prioridad by mutableStateOf("")
+    var prioridad by mutableStateOf("1")
     // Mensajes de error
-    var nombreError by mutableStateOf<String?>(null)
+    var tituloError by mutableStateOf<String?>(null)
     var descripcionError by mutableStateOf<String?>(null)
     var fechaAsignadaError by mutableStateOf<String?>(null)
     var fechaLimiteError by mutableStateOf<String?>(null)
@@ -33,29 +33,29 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
     fun validarCampos(): Boolean {
         var isValid = true
 
-        nombreError = if (nombre.isBlank()) {
+        tituloError = if (titulo.isBlank()) {
             isValid = false
             "El nombre es obligatorio"
         } else null
 
         descripcionError = if (descripcion.isBlank()) {
             isValid = false
-            "Agrege una descripcion para que no se le olvide de que va la tarea"
+            "Agregar una descripcion a su tarea"
         } else null
 
         fechaLimiteError = if (!isFechaValido(fechaLimite)) {
             isValid = false
-            "Correo no válido"
+            "Fecha limite no valida"
         } else null
 
         fechaAsignadaError = if (!isFechaValido(fechaAsignada)) {
             isValid = false
-            "Correo no válido"
+            "Fecha de asignacion no valida"
         } else null
 
-        prioridadError = if (prioridad.isBlank()) {
+        prioridadError = if (prioridad.toIntOrNull() == null || prioridad.toInt() !in 1..10) {
             isValid = false
-            "La boleta es obligatoria"
+            "La prioridad debe ser un número del 1 al 10"
         } else null
 
         registroExitoso = isValid
@@ -63,7 +63,7 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
     }
     private fun isFechaValido(fecha: String): Boolean {
         val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        formato.isLenient = false // Importante para que no acepte fechas como 32/01/2023
+        formato.isLenient = false
         return try {
             val fechaParseada = formato.parse(fecha)
             true
@@ -71,6 +71,22 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
             false
         }
     }
+    fun limpiarCampos() {
+        titulo = ""
+        descripcion = ""
+        fechaAsignada = ""
+        fechaLimite = ""
+        completado = false
+        prioridad = "1"
+        // Limpiar errores
+        tituloError = null
+        descripcionError = null
+        fechaAsignadaError = null
+        fechaLimiteError = null
+        prioridadError = null
+        registroExitoso = false
+    }
+
     private val _tareas = MutableStateFlow<List<Tarea>>(emptyList())
     val tareas: StateFlow<List<Tarea>> get() = _tareas
 
@@ -89,23 +105,30 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
             }
         }
     }
-    /*
-    fun findUserByEmail(email: String) {
+    fun borrarTarea(tarea: Tarea) {
         viewModelScope.launch {
-            _selectedTarea.value = repository.findByEmail(email)
+            repository.eliminarTarea(tarea)
         }
     }
-
-    fun findUserByName(name: String) {
+    fun cambiarCompletada(tarea: Tarea, estado: Boolean) {
         viewModelScope.launch {
-            _selectedUser.value = repository.findByName(name)
+            repository.modificarCompletada(tarea.id, estado)
+            loadTareas()
         }
     }
-
-    fun findUserByStudentId(studentId: String) {
+    fun seleccionarTareaParaEditar(tarea: Tarea) {
+        _selectedTarea.value = tarea
+        titulo = tarea.titulo
+        descripcion = tarea.descripcion
+        fechaAsignada = tarea.fechaAsignada
+        fechaLimite = tarea.fechaLimite
+        completado = tarea.completado
+        prioridad = tarea.prioridad.toString()
+    }
+    fun actualizarTarea(tarea: Tarea) {
         viewModelScope.launch {
-            _selectedUser.value = repository.findByStudentId(studentId)
+            repository.actualizarTarea(tarea)
+            loadTareas()
         }
     }
-    */
 }

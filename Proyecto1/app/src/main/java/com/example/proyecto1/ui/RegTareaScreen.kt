@@ -30,7 +30,7 @@ fun RegTareaScreen (navController: NavHostController, viewModel: TareaViewModel)
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Registro de tarea") })
+            TopAppBar(title = { Text("Registrar de tarea") })
         }
     ) {
         Column(
@@ -41,10 +41,10 @@ fun RegTareaScreen (navController: NavHostController, viewModel: TareaViewModel)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             InputField(
-                label = "Nombre",
-                value = viewModel.nombre,
-                onValueChange = { viewModel.nombre = it },
-                error = viewModel.nombreError,
+                label = "Titulo",
+                value = viewModel.titulo,
+                onValueChange = { viewModel.titulo = it },
+                error = viewModel.tituloError,
                 keyboardType = KeyboardType.Text
             )
             InputField(
@@ -68,39 +68,52 @@ fun RegTareaScreen (navController: NavHostController, viewModel: TareaViewModel)
                 error = viewModel.fechaLimiteError,
                 keyboardType = KeyboardType.Text
             )
-            InputField(
-                label = "Nivel de prioridad",
-                value = viewModel.prioridad,
-                onValueChange = { viewModel.prioridad = it },
-                error = viewModel.prioridadError,
-                keyboardType = KeyboardType.Number
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Nivel de prioridad: ${viewModel.prioridad.ifBlank { "1" }}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Slider(
+                    value = (viewModel.prioridad.toFloatOrNull() ?: 1f),
+                    onValueChange = { viewModel.prioridad = it.toInt().coerceIn(1, 10).toString() },
+                    valueRange = 1f..10f,
+                    steps = 8,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (viewModel.prioridadError != null) {
+                    Text(
+                        text = viewModel.prioridadError ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             Button(
                 onClick = {
                     if (viewModel.validarCampos()){
                         val nuevaTarea = Tarea(
-                            nombre = viewModel.nombre,
+                            titulo = viewModel.titulo,
                             descripcion = viewModel.descripcion,
                             fechaAsignada = viewModel.fechaAsignada,
                             fechaLimite = viewModel.fechaLimite,
                             completado = false,
                             prioridad = viewModel.prioridad.toInt()
                         )
-                        Log.d("PruebasJuan", "Nueva tarea: $nuevaTarea")
                         viewModel.addTarea(nuevaTarea)
-                        Log.d("PruebasJuan", "Paso la prueba")
                         navController.navigate("listar")
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Comprobar")
+                Text("Agregar")
             }
             Button(
                 onClick = { navController.navigate("listar") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Ver lista")
+                Text("Cancelar")
             }
         }
     }
