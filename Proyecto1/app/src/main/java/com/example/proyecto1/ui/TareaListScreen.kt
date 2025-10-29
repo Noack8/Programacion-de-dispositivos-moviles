@@ -80,6 +80,8 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
                             Text("Descripción: ${tarea.descripcion}", style = MaterialTheme.typography.bodyMedium)
                             Text("Fecha de asignación: ${tarea.fechaAsignada}", style = MaterialTheme.typography.bodyMedium)
                             Text("Fecha límite de entrega: ${tarea.fechaLimite}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Hora de asignación: ${tarea.horaAsignada}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Hora límite de entrega: ${tarea.horaLimite}", style = MaterialTheme.typography.bodyMedium)
                             //Text("Completada: ${tarea.completado}", style = MaterialTheme.typography.bodyMedium)
                             Text("Nivel de prioridad: ${tarea.prioridad}", style = MaterialTheme.typography.bodyMedium)
 

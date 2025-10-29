@@ -10,6 +10,8 @@ data class Tarea(
     val descripcion: String,
     val fechaAsignada: String,
     val fechaLimite: String,
+    val horaAsignada: String,
+    val horaLimite: String,
     val completado: Boolean,
     val prioridad: Int
 )
