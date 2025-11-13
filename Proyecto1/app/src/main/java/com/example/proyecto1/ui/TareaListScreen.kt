@@ -17,19 +17,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.proyecto1.viewModel.TareaViewModel
+import com.example.proyecto1.viewModel.TaskViewModel
 
 @Composable
-fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel) {
-    val tareas by viewModel.tareas.collectAsState(emptyList())
+fun TareaListScreen(navController: NavHostController, viewModel: TaskViewModel) {
+    val tasks by viewModel.tasks.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.loadTareas()
+        viewModel.getTasks()
     }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Lista de Tareas") },
+                title = { Text("\uD83E\uDDE0✨Lista de Tareas\uD83D\uDCCB\uD83D\uDD16") },
                 actions = {
                     IconButton(
                         onClick = {
@@ -49,7 +50,7 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
 
-            items(tareas) { tarea ->
+            items(tasks) { task ->
                 var showDialog by remember { mutableStateOf(false) }
 
                 Column(modifier = Modifier.padding(8.dp)) {
@@ -66,22 +67,27 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = tarea.titulo,
+                                    text = "📝 ${task.name}",
                                     style = MaterialTheme.typography.titleMedium
                                 )
+
+
                                 Checkbox(
-                                    checked = tarea.completado,
+                                    checked = task.completed,
                                     onCheckedChange = { isChecked ->
-                                        viewModel.cambiarCompletada(tarea, isChecked)
+                                        viewModel.cambiarCompletada(task, isChecked)
                                     }
                                 )
                             }
 
-                            Text("Descripción: ${tarea.descripcion}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Fecha de asignación: ${tarea.fechaAsignada}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Fecha límite de entrega: ${tarea.fechaLimite}", style = MaterialTheme.typography.bodyMedium)
-                            //Text("Completada: ${tarea.completado}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Nivel de prioridad: ${tarea.prioridad}", style = MaterialTheme.typography.bodyMedium)
+                            //Text("ID: ${task.id}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Descripción: 💬 ${task.description}", style = MaterialTheme.typography.bodyMedium)
+                            val fechaAsignada = task.dateAssigned?.substringBefore("T")
+                            Text("Fecha de asignación: 📅 $fechaAsignada 🕒 ${task.timeAssigned}", style = MaterialTheme.typography.bodyMedium)
+                            val fechaLimite = task.deadlineDate?.substringBefore("T")
+                            Text("Fecha límite de entrega: ⏰ $fechaLimite 🕓 ${task.deadlineTime}", style = MaterialTheme.typography.bodyMedium)
+                            //Text("Completada: ${task.completed}", style = MaterialTheme.typography.bodyMedium)
+                            Text("Nivel de prioridad: 🔥 ${task.priority}", style = MaterialTheme.typography.bodyMedium)
 
                             Spacer(modifier = Modifier.height(8.dp))
 
@@ -99,7 +105,7 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
                                 Button(
                                     onClick = {
                                         viewModel.limpiarCampos()
-                                        viewModel.seleccionarTareaParaEditar(tarea)
+                                        viewModel.seleccionarTareaParaEditar(task)
                                         navController.navigate("editar")
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -119,7 +125,7 @@ fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel)
                                 TextButton(
                                     onClick = {
                                         showDialog = false
-                                        viewModel.borrarTarea(tarea)
+                                        viewModel.deleteTask(task)
                                         navController.navigate("listar") {
                                             popUpTo("listar") { inclusive = true }
                                         }

@@ -10,8 +10,8 @@ import com.example.proyecto1.viewModel.TareaViewModel
 fun Navigator(viewModel: TareaViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "listar") {
-        composable("listar") { TareaListScreen(navController, viewModel) }
-        composable("agregar") { RegTareaScreen(navController, viewModel) }
-        composable("editar") { EditTareaScreen(navController, viewModel) }
+        //composable("listar") { TareaListScreen(navController, viewModel) }
+        //composable("agregar") { RegTareaScreen(navController, viewModel) }
+        //composable("editar") { EditTareaScreen(navController, viewModel) }
     }
 }

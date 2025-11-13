@@ -2,25 +2,28 @@
 
 package com.example.proyecto1.ui
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.proyecto1.model.Tarea
-import com.example.proyecto1.viewModel.TareaViewModel
+import com.example.proyecto1.model.Task
+import com.example.proyecto1.viewModel.TaskViewModel
+import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel) {
-
+fun EditTareaScreen(navController: NavHostController, viewModel: TaskViewModel) {
     val tareaEdit = viewModel.selectedTarea.collectAsState().value
     if (tareaEdit == null) {
         LaunchedEffect(Unit) { navController.navigate("listar") }
@@ -28,9 +31,7 @@ fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel)
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Editar Tarea") })
-        }
+        topBar = { TopAppBar(title = { Text("Editar tarea") }) }
     ) {
         Column(
             modifier = Modifier
@@ -39,50 +40,77 @@ fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel)
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Campos básicos
             InputField(
-                label = "Titulo",
-                value = viewModel.titulo,
-                onValueChange = { viewModel.titulo = it },
-                error = viewModel.tituloError,
-                keyboardType = KeyboardType.Text
-            )
-            InputField(
-                label = "Descripcion",
-                value = viewModel.descripcion,
-                onValueChange = { viewModel.descripcion = it },
-                error = viewModel.descripcionError,
-                keyboardType = KeyboardType.Text
-            )
-            InputField(
-                label = "Fecha asignada de la Tarea",
-                value = viewModel.fechaAsignada,
-                onValueChange = { viewModel.fechaAsignada = it },
-                error = viewModel.fechaAsignadaError,
-                keyboardType = KeyboardType.Text
-            )
-            InputField(
-                label = "Fecha limite de entrega",
-                value = viewModel.fechaLimite,
-                onValueChange = { viewModel.fechaLimite = it },
-                error = viewModel.fechaLimiteError,
+                label = "Título",
+                value = viewModel.name,
+                onValueChange = { viewModel.name = it },
+                error = viewModel.nameError,
                 keyboardType = KeyboardType.Text
             )
 
+            InputField(
+                label = "Descripción",
+                value = viewModel.description,
+                onValueChange = { viewModel.description = it },
+                error = viewModel.descriptionError,
+                keyboardType = KeyboardType.Text
+            )
+
+            // ---- 📅 Fecha y hora asignada (misma fila)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                DatePickerField(
+                    label = "Fecha asignada",
+                    date = viewModel.dateAssigned,
+                    onDateSelected = { viewModel.dateAssigned = it },
+                    error = viewModel.dateAssignedError,
+                    modifier = Modifier.weight(1f)
+                )
+                TimePickerField(
+                    label = "Hora asignada",
+                    time = viewModel.timeAssigned,
+                    onTimeSelected = { viewModel.timeAssigned = it },
+                    error = viewModel.timeAssignedError,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            // ---- 📅 Fecha y hora límite (otra fila)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                DatePickerField(
+                    label = "Fecha límite",
+                    date = viewModel.deadlineDate,
+                    onDateSelected = { viewModel.deadlineDate = it },
+                    error = viewModel.deadlineDateError,
+                    modifier = Modifier.weight(1f)
+                )
+                TimePickerField(
+                    label = "Hora límite",
+                    time = viewModel.deadlineTime,
+                    onTimeSelected = { viewModel.deadlineTime = it },
+                    error = viewModel.deadlineTimeError,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ---- Nivel de prioridad ----
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Nivel de prioridad: ${viewModel.prioridad.ifBlank { "1" }}",
+                    text = "Nivel de prioridad: ${viewModel.priority}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Slider(
-                    value = (viewModel.prioridad.toFloatOrNull() ?: 1f),
-                    onValueChange = { viewModel.prioridad = it.toInt().coerceIn(1, 10).toString() },
+                    value = viewModel.priority.toFloat(),
+                    onValueChange = { viewModel.priority = it.toInt().coerceIn(1, 10) },
                     valueRange = 1f..10f,
                     steps = 8,
                     modifier = Modifier.fillMaxWidth()
                 )
-                if (viewModel.prioridadError != null) {
+                if (viewModel.priorityError != null) {
                     Text(
-                        text = viewModel.prioridadError ?: "",
+                        text = viewModel.priorityError ?: "",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(start = 4.dp)
@@ -91,20 +119,22 @@ fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            // ---- Botones ----
             Button(
                 onClick = {
                     if (viewModel.validarCampos()) {
-                        val tarea = Tarea(
+                        val tareaActualizada = Task(
                             id = tareaEdit.id,
-                            titulo = viewModel.titulo,
-                            descripcion = viewModel.descripcion,
-                            fechaAsignada = viewModel.fechaAsignada,
-                            fechaLimite = viewModel.fechaLimite,
-                            completado = viewModel.completado,
-                            prioridad = viewModel.prioridad.toInt()
+                            name = viewModel.name,
+                            description = viewModel.description,
+                            dateAssigned = viewModel.dateAssigned,
+                            timeAssigned = viewModel.timeAssigned,
+                            deadlineDate = viewModel.deadlineDate,
+                            deadlineTime = viewModel.deadlineTime,
+                            completed = viewModel.completed,
+                            priority = viewModel.priority
                         )
-
-                        viewModel.actualizarTarea(tarea)
+                        viewModel.actualizarTask(tareaActualizada)
                         navController.navigate("listar")
                     }
                 },
@@ -116,9 +146,7 @@ fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel)
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = {
-                    navController.navigate("listar")
-                },
+                onClick = { navController.navigate("listar") },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cancelar")
