@@ -8,6 +8,5 @@ data class Usuario(
     @SerializedName("correo") val correo: String?,
     @SerializedName("boleta") val boleta: String?,
     @SerializedName("carrera") val carrera: String?,
-    @SerializedName("password") val password: String?,
-    val token: String? = null
+    @SerializedName("password") val password: String?
 )

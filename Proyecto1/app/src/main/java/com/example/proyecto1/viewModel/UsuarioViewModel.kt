@@ -7,10 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto1.apiclient.RetrofitClient
-import com.google.gson.annotations.SerializedName
+import com.example.proyecto1.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.google.gson.annotations.SerializedName
 
 class UsuarioViewModel : ViewModel() {
     // Propiedades para los campos de entrada
@@ -33,6 +34,43 @@ class UsuarioViewModel : ViewModel() {
     var token by mutableStateOf("")
     var userId by mutableStateOf(-1)
 
+    // Función para registrar usuario
+    fun registrarUsuario(
+    nombre: String,
+    correo: String,
+    boleta: String,
+    carrera: String,
+    password: String,
+    onSuccess: () -> Unit,
+    onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val usuario = Usuario(
+                    nombre = nombre,
+                    correo = correo,
+                    boleta = boleta,
+                    carrera = carrera,
+                    password = password
+                )
+
+                val response = RetrofitClient.api.register(usuario)
+
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    val errorMsg = when (response.code()) {
+                        400 -> "El usuario ya existe o datos inválidos"
+                        500 -> "Error del servidor"
+                        else -> "Error al registrar usuario: ${response.code()}"
+                    }
+                    onError(errorMsg)
+                }
+            } catch (e: Exception) {
+                onError("Error de conexión: ${e.message}")
+            }
+        }
+    }
     fun validarCampos(): Boolean {
         var isValid = true
 
@@ -123,6 +161,12 @@ class UsuarioViewModel : ViewModel() {
     }
 }
 
+data class LoginResponse(
+    @SerializedName("id") val id: Int,
+    @SerializedName("nombre") val nombre: String,
+    @SerializedName("token") val token: String
+)
+
 data class UserData(
     val id: Int,
     val nombre: String,
@@ -132,10 +176,4 @@ data class UserData(
 data class LoginData(
     @SerializedName("correo") val correo: String,
     @SerializedName("password") val password: String
-)
-
-data class LoginResponse(
-    @SerializedName("id") val id: Int,
-    @SerializedName("nombre") val nombre: String,
-    @SerializedName("token") val token: String
 )

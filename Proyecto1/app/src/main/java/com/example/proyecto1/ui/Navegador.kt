@@ -12,6 +12,7 @@ fun Navegador(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController, usuarioViewModel) }
+        composable("registro") { RegistroScreen(navController, usuarioViewModel) }
         composable("listar") { TareaListScreen(navController, tareaViewModel, usuarioViewModel) }
         composable("agregar") { RegTareaScreen(navController, tareaViewModel, usuarioViewModel) }
         composable("editar") { EditTareaScreen(navController, tareaViewModel) }

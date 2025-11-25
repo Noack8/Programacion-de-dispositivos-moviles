@@ -129,11 +129,11 @@ fun TareaListScreen(navController: NavHostController, tareaViewModel: TareaViewM
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        Text(
+                        /*Text(
                             text = "ID: ${userData!!.id}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        )*/
                     }
                 }
             }

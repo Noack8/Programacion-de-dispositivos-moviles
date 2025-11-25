@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.proyecto1.viewModel.TareaViewModel
@@ -68,15 +69,14 @@ fun LoginScreen(navController: NavHostController, viewModel: UsuarioViewModel) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
+            
             // Campo de contraseña
             OutlinedTextField(
                 value = viewModel.password,
                 onValueChange = { viewModel.password = it },
                 label = { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
-                //visualTransformation = PasswordVisualTransformation(),
-                isError = viewModel.passwordError != null,
+                visualTransformation = PasswordVisualTransformation(),
                 enabled = !isLoading
             )
             if (viewModel.passwordError != null) {
@@ -124,8 +124,7 @@ fun LoginScreen(navController: NavHostController, viewModel: UsuarioViewModel) {
             // Botón de registro (por implementar)
             Button(
                 onClick = {
-                    // TODO: Navegar a pantalla de registro
-                    // navController.navigate("registro")
+                    navController.navigate("registro")
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(

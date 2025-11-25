@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.proyecto1.apiclient.RetrofitClient
 import com.example.proyecto1.model.Tarea
 import com.example.proyecto1.model.TareaCreateRequest
-import com.example.proyecto1.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

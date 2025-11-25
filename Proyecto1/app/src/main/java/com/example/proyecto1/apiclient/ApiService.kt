@@ -2,6 +2,7 @@ package com.example.proyecto1.apiclient
 
 import com.example.proyecto1.model.Tarea
 import com.example.proyecto1.model.TareaCreateRequest
+import com.example.proyecto1.model.Usuario
 import com.example.proyecto1.viewModel.LoginData
 import com.example.proyecto1.viewModel.LoginResponse
 import retrofit2.Response
@@ -24,4 +25,6 @@ interface ApiService {
     // Login endpoint - AÑADIDO
     @POST("login")
     suspend fun login(@Body loginData: LoginData): Response<LoginResponse>
+    @POST("usuarios")
+    suspend fun register(@Body usuario: Usuario): Response<Usuario>
 }
