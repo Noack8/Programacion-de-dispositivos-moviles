@@ -1,5 +1,6 @@
 package com.example.proyecto1.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
@@ -7,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto1.apiclient.RetrofitClient
 import com.example.proyecto1.model.Tarea
+import com.example.proyecto1.model.TareaCreateRequest
+import com.example.proyecto1.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -94,10 +97,11 @@ class TareaViewModel : ViewModel() {
     private val _tasks = MutableStateFlow<List<Tarea>>(emptyList())
     val tasks: StateFlow<List<Tarea>> = _tasks
 
-    fun getTasks() {
+    // Modifica las funciones para recibir el usuarioId
+    fun getTasks(usuarioId: Int) {
         viewModelScope.launch {
             try {
-                val result = RetrofitClient.api.getTasks()
+                val result = RetrofitClient.api.getTasks(usuarioId)
                 _tasks.value = result
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -105,10 +109,23 @@ class TareaViewModel : ViewModel() {
         }
     }
 
-    fun addTask(task: Tarea) {
+    fun addTask(usuarioId: Int, tarea: Tarea) {
         viewModelScope.launch {
             try {
-                val newTask = RetrofitClient.api.createTask(task)
+                val tareaRequest = TareaCreateRequest(
+                    nombre = tarea.name,
+                    descripcion = tarea.description,
+                    fecha_asignacion = tarea.dateAssigned,
+                    hora_asignacion = tarea.timeAssigned,
+                    fecha_entrega = tarea.deadlineDate,
+                    hora_entrega = tarea.deadlineTime,
+                    finalizada = false,
+                    prioridad = tarea.priority,
+                    usuario_id = usuarioId  // ← Enviamos el usuario_id
+                )
+                Log.d("JuanPruebas", "tareaRequest: $tareaRequest")
+                val newTask = RetrofitClient.api.createTask(tareaRequest)
+                Log.d("JuanPruebas", "Tarea retornada: $newTask")
                 _tasks.value = _tasks.value + newTask
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -116,10 +133,10 @@ class TareaViewModel : ViewModel() {
         }
     }
 
-    fun deleteTask(task: Tarea) {
+    fun deleteTask(task: Tarea,usuarioId: Int) {
         viewModelScope.launch {
             try {
-                RetrofitClient.api.deleteTask(task.id)
+                RetrofitClient.api.deleteTask(task.id,usuarioId)
                 _tasks.value = _tasks.value - task
             } catch (e: Exception) {
                 e.printStackTrace()

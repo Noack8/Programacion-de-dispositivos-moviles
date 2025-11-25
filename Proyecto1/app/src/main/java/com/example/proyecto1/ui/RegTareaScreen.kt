@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.proyecto1.model.Tarea
 import com.example.proyecto1.viewModel.TareaViewModel
+import com.example.proyecto1.viewModel.UsuarioViewModel
 import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegTareaScreen(navController: NavHostController, viewModel: TareaViewModel) {
+fun RegTareaScreen(navController: NavHostController, viewModel: TareaViewModel, usuarioViewModel: UsuarioViewModel) {
+    val userData by usuarioViewModel.userData.collectAsState()
     val context = LocalContext.current
 
     Scaffold(
@@ -131,7 +133,7 @@ fun RegTareaScreen(navController: NavHostController, viewModel: TareaViewModel) 
                             completed = viewModel.completed,
                             priority = viewModel.priority
                         )
-                        viewModel.addTask(nuevaTarea)
+                        viewModel.addTask(userData?.id!!,nuevaTarea)
                         navController.navigate("listar")
                     }
                 },

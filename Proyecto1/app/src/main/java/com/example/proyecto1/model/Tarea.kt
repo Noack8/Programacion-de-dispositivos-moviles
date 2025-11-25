@@ -11,5 +11,5 @@ data class Tarea (
     @SerializedName("fecha_entrega") val deadlineDate: String?,
     @SerializedName("hora_entrega") val deadlineTime: String?,
     @SerializedName("finalizada") val completed: Boolean,
-    @SerializedName("prioridad") val priority: Int
+    @SerializedName("prioridad") val priority: Int,
 )
