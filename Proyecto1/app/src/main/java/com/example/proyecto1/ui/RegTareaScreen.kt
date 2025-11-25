@@ -20,13 +20,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.proyecto1.model.Task
-import com.example.proyecto1.viewModel.TaskViewModel
+import com.example.proyecto1.model.Tarea
+import com.example.proyecto1.viewModel.TareaViewModel
 import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegTareaScreen(navController: NavHostController, viewModel: TaskViewModel) {
+fun RegTareaScreen(navController: NavHostController, viewModel: TareaViewModel) {
     val context = LocalContext.current
 
     Scaffold(
@@ -121,7 +121,7 @@ fun RegTareaScreen(navController: NavHostController, viewModel: TaskViewModel) {
             Button(
                 onClick = {
                     if (viewModel.validarCampos()) {
-                        val nuevaTarea = Task(
+                        val nuevaTarea = Tarea(
                             name = viewModel.name,
                             description = viewModel.description,
                             dateAssigned = viewModel.dateAssigned,

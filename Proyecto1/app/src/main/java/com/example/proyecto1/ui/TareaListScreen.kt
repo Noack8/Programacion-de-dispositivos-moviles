@@ -17,10 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.proyecto1.viewModel.TareaViewModel
-import com.example.proyecto1.viewModel.TaskViewModel
 
 @Composable
-fun TareaListScreen(navController: NavHostController, viewModel: TaskViewModel) {
+fun TareaListScreen(navController: NavHostController, viewModel: TareaViewModel) {
     val tasks by viewModel.tasks.collectAsState()
 
     LaunchedEffect(Unit) {

@@ -1,59 +1,70 @@
 package com.example.proyecto1.viewModel
 
-import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.proyecto1.apiclient.RetrofitClient
 import com.example.proyecto1.model.Tarea
-import com.example.proyecto1.model.TareaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.regex.Pattern
+import kotlin.collections.plus
 
-class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
-
-    var titulo by mutableStateOf("")
-    var descripcion by mutableStateOf("")
-    var fechaAsignada by mutableStateOf("")
-    var fechaLimite by mutableStateOf("")
-    var completado by mutableStateOf(false)
-    var prioridad by mutableStateOf("1")
+class TareaViewModel : ViewModel() {
+    // Propiedades para los campos de entrada
+    var name by mutableStateOf("")
+    var description by mutableStateOf("")
+    var dateAssigned by mutableStateOf("")
+    var timeAssigned by mutableStateOf("")
+    var deadlineDate by mutableStateOf("")
+    var deadlineTime by mutableStateOf("")
+    var completed by mutableStateOf(false)
+    var priority by mutableStateOf(1)
     // Mensajes de error
-    var tituloError by mutableStateOf<String?>(null)
-    var descripcionError by mutableStateOf<String?>(null)
-    var fechaAsignadaError by mutableStateOf<String?>(null)
-    var fechaLimiteError by mutableStateOf<String?>(null)
-    var prioridadError by mutableStateOf<String?>(null)
+    var nameError by mutableStateOf<String?>(null)
+    var descriptionError by mutableStateOf<String?>(null)
+    var dateAssignedError by mutableStateOf<String?>(null)
+    var timeAssignedError by mutableStateOf<String?>(null)
+    var deadlineDateError by mutableStateOf<String?>(null)
+    var deadlineTimeError by mutableStateOf<String?>(null)
+    var priorityError by mutableStateOf<String?>(null)
     var registroExitoso by mutableStateOf(false)
     fun validarCampos(): Boolean {
         var isValid = true
 
-        tituloError = if (titulo.isBlank()) {
+        nameError = if (name.isBlank()) {
             isValid = false
             "El nombre es obligatorio"
         } else null
 
-        descripcionError = if (descripcion.isBlank()) {
+        descriptionError = if (description.isBlank()) {
             isValid = false
             "Agregar una descripcion a su tarea"
         } else null
 
-        fechaLimiteError = if (!isFechaValido(fechaLimite)) {
-            isValid = false
-            "Fecha limite no valida"
-        } else null
-
-        fechaAsignadaError = if (!isFechaValido(fechaAsignada)) {
+        dateAssignedError = if (dateAssigned.isBlank()) {
             isValid = false
             "Fecha de asignacion no valida"
         } else null
 
-        prioridadError = if (prioridad.toIntOrNull() == null || prioridad.toInt() !in 1..10) {
+        timeAssignedError = if (timeAssigned.isBlank()) {
+            isValid = false
+            "Hora de asignacion no valida"
+        } else null
+
+        deadlineDateError = if (deadlineDate.isBlank()) {
+            isValid = false
+            "Fecha limite no valida"
+        } else null
+
+        deadlineTimeError = if (deadlineTime.isBlank()) {
+            isValid = false
+            "Hora limite no valida"
+        } else null
+
+        priorityError = if (priority.toInt() !in 1..10) {
             isValid = false
             "La prioridad debe ser un número del 1 al 10"
         } else null
@@ -61,74 +72,95 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
         registroExitoso = isValid
         return isValid
     }
-    private fun isFechaValido(fecha: String): Boolean {
-        val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        formato.isLenient = false
-        return try {
-            val fechaParseada = formato.parse(fecha)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
     fun limpiarCampos() {
-        titulo = ""
-        descripcion = ""
-        fechaAsignada = ""
-        fechaLimite = ""
-        completado = false
-        prioridad = "1"
+        name = ""
+        description = ""
+        dateAssigned = ""
+        timeAssigned = ""
+        deadlineDate = ""
+        deadlineTime = ""
+        completed = false
+        priority = 1
         // Limpiar errores
-        tituloError = null
-        descripcionError = null
-        fechaAsignadaError = null
-        fechaLimiteError = null
-        prioridadError = null
+        nameError = null
+        descriptionError = null
+        dateAssignedError = null
+        timeAssignedError = null
+        deadlineDateError = null
+        deadlineTimeError = null
+        priorityError = null
         registroExitoso = false
     }
+    private val _tasks = MutableStateFlow<List<Tarea>>(emptyList())
+    val tasks: StateFlow<List<Tarea>> = _tasks
 
-    private val _tareas = MutableStateFlow<List<Tarea>>(emptyList())
-    val tareas: StateFlow<List<Tarea>> get() = _tareas
-
-    private val _selectedTarea = MutableStateFlow<Tarea?>(null)
-    val selectedTarea: StateFlow<Tarea?> get() = _selectedTarea
-    fun loadTareas() {
+    fun getTasks() {
         viewModelScope.launch {
-            _tareas.value = repository.getAll()
-        }
-    }
-    fun addTarea(tarea: Tarea) {
-        viewModelScope.launch {
-            val success = repository.insert(tarea)
-            if (!success) {
-                Log.e("PruebasJuan", "Error al insertar usuario")
+            try {
+                val result = RetrofitClient.api.getTasks()
+                _tasks.value = result
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
-    fun borrarTarea(tarea: Tarea) {
+
+    fun addTask(task: Tarea) {
         viewModelScope.launch {
-            repository.eliminarTarea(tarea)
+            try {
+                val newTask = RetrofitClient.api.createTask(task)
+                _tasks.value = _tasks.value + newTask
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
-    fun cambiarCompletada(tarea: Tarea, estado: Boolean) {
+
+    fun deleteTask(task: Tarea) {
         viewModelScope.launch {
-            repository.modificarCompletada(tarea.id, estado)
-            loadTareas()
+            try {
+                RetrofitClient.api.deleteTask(task.id)
+                _tasks.value = _tasks.value - task
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
-    fun seleccionarTareaParaEditar(tarea: Tarea) {
-        _selectedTarea.value = tarea
-        titulo = tarea.titulo
-        descripcion = tarea.descripcion
-        fechaAsignada = tarea.fechaAsignada
-        fechaLimite = tarea.fechaLimite
-        completado = tarea.completado
-        prioridad = tarea.prioridad.toString()
-    }
-    fun actualizarTarea(tarea: Tarea) {
+
+    fun cambiarCompletada(task: Tarea, estado: Boolean) {
         viewModelScope.launch {
-            repository.actualizarTarea(tarea)
-            loadTareas()
+            try {
+                val updatedTask = task.copy(completed = estado)
+                RetrofitClient.api.updateTask(task.id,updatedTask)
+                _tasks.value = _tasks.value.map { if (it.id == task.id) updatedTask else it }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private val _selectedTarea = MutableStateFlow<Tarea?>(null)
+    val selectedTarea: StateFlow<Tarea?> get() = _selectedTarea
+
+    fun seleccionarTareaParaEditar(task: Tarea) {
+        _selectedTarea.value = task
+        name = task.name
+        description = task.description ?: ""
+        dateAssigned = task.dateAssigned?.substringBefore("T") ?: ""
+        timeAssigned = task.timeAssigned ?: ""
+        deadlineDate = task.deadlineDate?.substringBefore("T") ?: ""
+        deadlineTime = task.deadlineTime ?: ""
+        completed = task.completed
+        priority = task.priority
+    }
+    fun actualizarTask(task: Tarea) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.api.updateTask(task.id, task)
+                _tasks.value = _tasks.value.map { if (it.id == task.id) task else it }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

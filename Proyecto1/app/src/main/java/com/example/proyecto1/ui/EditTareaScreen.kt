@@ -2,28 +2,21 @@
 
 package com.example.proyecto1.ui
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.proyecto1.model.Task
-import com.example.proyecto1.viewModel.TaskViewModel
-import java.util.*
+import com.example.proyecto1.model.Tarea
+import com.example.proyecto1.viewModel.TareaViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EditTareaScreen(navController: NavHostController, viewModel: TaskViewModel) {
+fun EditTareaScreen(navController: NavHostController, viewModel: TareaViewModel) {
     val tareaEdit = viewModel.selectedTarea.collectAsState().value
     if (tareaEdit == null) {
         LaunchedEffect(Unit) { navController.navigate("listar") }
@@ -123,7 +116,7 @@ fun EditTareaScreen(navController: NavHostController, viewModel: TaskViewModel) 
             Button(
                 onClick = {
                     if (viewModel.validarCampos()) {
-                        val tareaActualizada = Task(
+                        val tareaActualizada = Tarea(
                             id = tareaEdit.id,
                             name = viewModel.name,
                             description = viewModel.description,
